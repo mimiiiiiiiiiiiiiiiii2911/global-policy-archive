@@ -4,129 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Policy Observer | Diplomatic Archive</title>
-    
-    <!-- Link Font chữ chuẩn -->
-    <link href="https://googleapis.com" rel="stylesheet">
-    
-    <style>
-        :root { --navy: #002147; --gold: #c5a059; --paper: #fcfaf7; }
-        body { font-family: 'Lora', serif; background-color: var(--paper); color: #1a1a1a; margin: 0; line-height: 1.8; }
-        
-        /* Thanh dịch thuật Google tinh tế */
-        #google_translate_element { padding: 10px; text-align: right; background: #f0ede5; border-bottom: 1px solid #ddd; }
-
-        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
-        header { text-align: center; border-bottom: 4px double var(--navy); margin-top: 50px; padding-bottom: 30px; margin-bottom: 60px; }
-        h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; color: var(--navy); }
-        .tagline { text-transform: uppercase; letter-spacing: 3px; font-size: 0.65rem; font-weight: bold; color: var(--gold); margin-top: 15px; }
-
-        /* Admin Panel bí mật */
-        #adminPanel { background: white; padding: 30px; border: 1px solid #e0e0e0; margin-bottom: 60px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        select, textarea { width: 100%; border: 1px solid #eee; padding: 15px; font-family: 'Lora', serif; font-size: 1rem; background: #f9f9f9; outline: none; margin-bottom: 15px; }
-        .btn-post { width: 100%; background: var(--navy); color: white; border: none; padding: 18px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Bài viết */
-        .post { margin-bottom: 80px; }
-        .post-meta { font-size: 0.7rem; color: var(--gold); font-weight: bold; text-transform: uppercase; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .post-content { font-size: 1.2rem; color: #222; text-align: justify; margin-top: 15px; }
-        .post-content::first-letter { font-family: 'Playfair Display', serif; font-size: 3.5rem; float: left; line-height: 0.8; margin-right: 10px; color: var(--navy); padding-top: 5px; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./main.css">
 </head>
 <body>
-
-    <!-- BỘ DỊCH GOOGLE -->
     <div id="google_translate_element"></div>
 
     <div class="container">
-        <div style="text-align: right; margin-top: 20px;">
-            <button onclick="toggleAdmin()" style="background:none; border:none; color:#ccc; font-size:10px; cursor:pointer; text-decoration:underline;">SYSTEM ACCESS</button>
-        </div>
-
         <header>
             <h1>Global Policy Observer</h1>
-            <div class="tagline">Multilateralism & Strategic Governance Intelligence Archive</div>
+            <div class="tagline">Multilateralism &amp; Strategic Governance Intelligence Archive</div>
         </header>
 
-        <section id="adminPanel">
-            <h2 style="font-family: 'Playfair Display'; margin-top: 0;">New Dispatch</h2>
+        <div class="feed-toolbar">
+            <button
+                type="button"
+                id="btnToggleCompose"
+                class="btn-open-compose"
+                aria-expanded="false"
+                aria-controls="composePanel"
+            >
+                Đăng bài viết
+            </button>
+        </div>
+
+        <section id="composePanel" class="compose-panel" aria-label="Form đăng bài" hidden>
+            <p class="compose-intro">
+                Chia sẻ bài phân tích hoặc tin tức. Bài đăng công khai và bất kỳ ai sử dụng trang này đều có thể xóa bài đăng đó.
+            </p>
+            <div class="compose-panel-head">
+                <h2 class="compose-panel-title">Tin mới</h2>
+                <button type="button" id="btnCloseCompose" class="btn-close-compose">Đóng</button>
+            </div>
+            <label class="visually-hidden" for="categoryInput">Chủ đề</label>
             <select id="categoryInput">
-                <option value="Water Diplomacy">Water Diplomacy</option>
-                <option value="Global Security">Global Security</option>
-                <option value="UN Reform">UN Reform</option>
-                <option value="Human Rights">Human Rights</option>
+                <option value="Ngoại giao nước">Ngoại giao nước</option>
+                <option value="An ninh toàn cầu">An ninh toàn cầu</option>
+                <option value="Cải cách LHQ">Cải cách LHQ</option>
+                <option value="Nhân quyền">Nhân quyền</option>
             </select>
-            <textarea id="statusInput" placeholder="Enter analysis..."></textarea>
-            <button onclick="postStatus()" id="btnPost" class="btn-post">Publish Dispatch</button>
+            <label class="visually-hidden" for="statusInput">Nội dung</label>
+            <textarea id="statusInput" placeholder="Bắt đầu phân tích..." rows="6"></textarea>
+            <button type="button" id="btnPost" class="btn-post">Xuất bản tin</button>
         </section>
 
-        <div id="loading" style="text-align:center; font-style:italic; color:#999;">Connecting to archive...</div>
+        <div id="loading" class="loading">Connecting to archive...</div>
         <div id="feed"></div>
     </div>
 
-    <!-- SCRIPTS CHUẨN -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="https://google.com"></script>
-    
-    <script src="https://jsdelivr.net"></script>
-    <script>
-        const SUPABASE_URL = 'https://fgfghhpcbknjyzblwlaz.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnZmdoaHBjYmtuanl6Ymx3bGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NDQwNTcsImV4cCI6MjA5MjMyMDA1N30.nCatD8KEGwTMddsi0FsPjhikfMyVucoOkkXhgS0_PS4';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        async function fetchPosts() {
-            const { data, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
-            if (!error) {
-                document.getElementById('loading').style.display = 'none';
-                displayPosts(data);
-            }
-        }
-
-        function displayPosts(posts) {
-            const feed = document.getElementById('feed');
-            feed.innerHTML = posts.map(p => {
-                const d = new Date(p.created_at);
-                const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                return `
-                    <article class="post">
-                        <div class="post-meta">
-                            <span>${p.category || 'General'} | Policy Record</span>
-                            <span>${dateStr}</span>
-                        </div>
-                        <div class="post-content">${p.content}</div>
-                    </article>
-                `;
-            }).join('');
-        }
-
-        async function postStatus() {
-            const content = document.getElementById('statusInput').value;
-            const category = document.getElementById('categoryInput').value;
-            if(!content.trim()) return;
-            const btn = document.getElementById('btnPost');
-            btn.innerText = "PUBLISHING...";
-            const { error } = await _supabase.from('posts').insert([{ content, category }]);
-            if (!error) {
-                document.getElementById('statusInput').value = '';
-                document.getElementById('adminPanel').style.display = 'none';
-                fetchPosts();
-            }
-            btn.innerText = "Publish Dispatch";
-        }
-
-        function toggleAdmin() {
-            if (prompt("Access Key:") === "1234") {
-                const panel = document.getElementById('adminPanel');
-                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            }
-        }
-        fetchPosts();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <script src="./main.js" defer></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
 </body>
 </html>
-
-
-    
